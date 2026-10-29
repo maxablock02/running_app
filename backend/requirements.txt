@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+sqlmodel
+garminconnect
+python-dotenv
+pytest
+httpx

@@ -1,0 +1,17 @@
+# Personal data and secrets
+backend/data/
+backend/.garmin_tokens/
+.env
+*.db
+
+# Local editor / agent config (machine-specific paths)
+.claude/
+
+# Python
+backend/.venv/
+__pycache__/
+.pytest_cache/
+
+# Node
+frontend/node_modules/
+frontend/dist/
