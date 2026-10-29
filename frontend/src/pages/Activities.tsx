@@ -17,10 +17,29 @@ export default function Activities() {
   const [runsOnly, setRunsOnly] = useState(true)
   const [open, setOpen] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [voiceOn, setVoiceOn] = useState(false)
+  const [playing, setPlaying] = useState<number | null>(null)
 
   useEffect(() => {
     api.activities(300).then(setRows).catch((e) => setError(e.message))
+    api.voice().then((v) => setVoiceOn(v.configured)).catch(() => setVoiceOn(false))
   }, [])
+
+  // Spoken recap: the backend writes the summary, ElevenLabs reads it.
+  async function playRecap(id: number) {
+    setPlaying(id)
+    try {
+      const url = URL.createObjectURL(await api.recapAudio(id))
+      const audio = new Audio(url)
+      const done = () => { URL.revokeObjectURL(url); setPlaying(null) }
+      audio.onended = done
+      audio.onerror = done
+      await audio.play()
+    } catch (e) {
+      setError((e as Error).message)
+      setPlaying(null)
+    }
+  }
 
   // Optimistic local edit; persist on blur/change so typing doesn't spam the API.
   const edit = (id: number, patch: Partial<Activity>) =>
@@ -60,6 +79,10 @@ export default function Activities() {
                 <td>
                   <button className="star" title={open === a.id ? 'Hide laps' : 'Show laps'}
                     onClick={() => setOpen(open === a.id ? null : a.id)}>{open === a.id ? '▾' : '▸'}</button>
+                  {voiceOn && a.activity_type.includes('running') && (
+                    <button className="star" title="Play spoken recap" disabled={playing !== null}
+                      onClick={() => playRecap(a.id)}>{playing === a.id ? '…' : '🔊'}</button>
+                  )}
                 </td>
                 <td>
                   <button className={`star ${a.key ? 'on' : ''}`} title={a.key ? 'Key workout (click to remove)' : 'Mark as key workout'}

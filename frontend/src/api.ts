@@ -283,6 +283,16 @@ export const api = {
   updateBlock: (id: number, b: BlockInput) => request<Block>(`/api/blocks/${id}`, send('PUT', b)),
   deleteBlock: (id: number) => request<{ ok: boolean }>(`/api/blocks/${id}`, send('DELETE')),
   fetchBlockLaps: (id: number) => request<{ fetched: number }>(`/api/blocks/${id}/fetch-laps`, send('POST')),
+  voice: () => request<{ configured: boolean }>('/api/voice'),
+  recap: (id: number) => request<{ text: string }>(`/api/activities/${id}/recap`),
+  recapAudio: async (id: number) => {
+    const res = await fetch(`/api/activities/${id}/recap/audio`)
+    if (!res.ok) {
+      const body = await res.json().catch(() => null)
+      throw new Error(body?.detail ?? `${res.status} ${res.statusText}`)
+    }
+    return res.blob()
+  },
   syncState: () => request<SyncState>('/api/sync'),
   sync: (full = false) => request<{ fetched: number; new: number; since: string }>('/api/sync', send('POST', { full })),
 }

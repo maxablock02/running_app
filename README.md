@@ -82,6 +82,20 @@ The app ships with generic defaults. Before trusting any number it shows:
   If a build was cut short, set its *interrupted on* date so estimates use only the weeks before.
 - **Activities / Rehab** — optionally log RPE, pain and notes per run, and a daily rehab log.
 
+### 4. Spoken run recaps (optional, ElevenLabs)
+
+Each run on **Activities** gets a 🔊 button that reads a short recap aloud, e.g. *"Yesterday's
+tempo run: 8.1 miles in 58 minutes 20 seconds, averaging 7:12 per mile at an average heart rate of
+158. The hard part was 4.0 miles at 6:41 per mile. That's 9 seconds per mile faster than your
+average for similar runs over the last 8 weeks. Training load 92, with 31.4 miles so far this week."*
+
+The backend writes the text from your own data (`app/recap.py`; "similar runs" = same workout type,
+distance within ±25%, last 8 weeks) and sends only that text to
+[ElevenLabs text-to-speech](https://elevenlabs.io/docs). To turn it on, copy `backend/.env.example`
+to `backend/.env` (git-ignored), set `ELEVENLABS_API_KEY`, and restart the backend. Optionally set
+`ELEVENLABS_VOICE_ID` to any voice from your library. Without a key the button is hidden; the text
+alone is at `GET /api/activities/{id}/recap`.
+
 ## Demo data
 
 To try the UI without a Garmin account, seed a separate throwaway database with a fictional runner's

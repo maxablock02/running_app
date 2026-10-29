@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.db import init_db
-from app.routers import activities, blocks, fitness, tracking
+from app.routers import activities, blocks, fitness, tracking, voice
 
 
 @asynccontextmanager
@@ -19,3 +19,4 @@ app.include_router(activities.router)
 app.include_router(tracking.router)
 app.include_router(blocks.router)
 app.include_router(fitness.router)
+app.include_router(voice.router)
